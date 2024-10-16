@@ -103,7 +103,7 @@ export const connectWallet = async (
   wallet.on('disconnect', () => {
     wallet.removeAllListeners();
     dispatch(clearWallet(type));
-    localStorage.removeItem(`wormhole-connect:wallet:${context}`);
+    sessionStorage.removeItem(`wormhole-connect:wallet:${context}`);
   });
 
   // when the user has multiple wallets connected and either changes
@@ -118,7 +118,7 @@ export const connectWallet = async (
     }
   });
 
-  localStorage.setItem(`wormhole-connect:wallet:${context}`, name);
+  sessionStorage.setItem(`wormhole-connect:wallet:${context}`, name);
 };
 
 // Checks localStorage for previously used wallet for this chain
@@ -129,7 +129,7 @@ export const connectLastUsedWallet = async (
   dispatch: Dispatch<any>,
 ) => {
   const chainConfig = config.chains[chain!]!;
-  const lastUsedWallet = localStorage.getItem(
+  const lastUsedWallet = sessionStorage.getItem(
     `wormhole-connect:wallet:${chainConfig.context}`,
   );
   // if the last used wallet is not WalletConnect, try to connect to it
