@@ -86,6 +86,7 @@ const parseConfig : WormholeConnectConfig = {
 			fromChain: 'Polygon',
 			toChain: 'Solana',
 		},
+		walletConnectProjectId:"2e9865daf298b82271cad95d869c9093",
 		showHamburgerMenu: false,
 	}
 };
