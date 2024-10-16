@@ -1,7 +1,9 @@
 import { NttRoute } from '@wormhole-foundation/sdk-route-ntt';
 import React from 'react';
 import './styles.css';
-
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
 import { WormholeConnectConfig } from 'config/types';
 import WormholeConnect from '../../WormholeConnect';
 
@@ -97,15 +99,80 @@ function DemoApp() {
 
   return (
     <>
-
+		<Box
+		    display={'flex'}
+		    component="a"
+		    href="/"
+		    title="theFront"
+		    width={{ xs: 120, md: 160 }}
+			margin={'20px 60px'}
+		  >
+		    <Box
+		      component={'img'}
+		      src={
+		        '/logo-white.png'
+		      }
+		      height={1}
+		      width={1}
+		    />
+	  </Box>
       <article>
         <div id="demo-contents">
-
             <WormholeConnect  config={parseConfig} />
-
         </div>
-
       </article>
+	  
+	  <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <Box
+            display={'flex'}
+            justifyContent={'space-between'}
+            alignItems={'center'}
+            width={1}
+            flexDirection={{ xs: 'column', sm: 'row' }}
+          >
+            <Box
+              display={'flex'}
+              component="a"
+              href="/"
+              title="theFront"
+              width={80}
+			  margin={'20px 60px'}
+            >
+              <Box
+                component={'img'}
+                src={
+                  '/logo-white.png'
+                }
+                height={1}
+                width={1}
+              />
+            </Box>
+          </Box>
+        </Grid>
+        <Grid item xs={12} marginBottom={'30px'}>
+          <Typography
+            align={'center'}
+            variant={'subtitle2'}
+            color="white"
+            gutterBottom
+          >
+            &copy; GEODAO Foundation. 2024
+          </Typography>
+          <Typography
+            align={'center'}
+            variant={'caption'}
+            color="white"
+            component={'p'}
+          >
+            When you visit or interact with our sites, services or tools, we or
+            our authorised service providers may use cookies for storing
+            information to help provide you with a better, faster and safer
+            experience and for marketing purposes.
+          </Typography>
+        </Grid>
+      </Grid>
+	  
     </>
   );
 }

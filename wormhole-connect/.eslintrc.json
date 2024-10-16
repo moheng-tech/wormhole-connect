@@ -1,14 +1,24 @@
 {
   "env": {
-    "node": true
+    "node": true,
+    "browser": true,
+    "es2021": true
   },
   "root": true,
   "parser": "@typescript-eslint/parser",
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
   "plugins": ["@typescript-eslint"],
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
     "prettier"
+    
   ],
   "rules": {
     "comma-dangle": ["error", "always-multiline"],
@@ -24,3 +34,5 @@
     "no-unused-vars": "off"
   }
 }
+
+
