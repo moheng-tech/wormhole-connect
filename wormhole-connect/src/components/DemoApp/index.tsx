@@ -1,241 +1,110 @@
+import { NttRoute } from '@wormhole-foundation/sdk-route-ntt';
+import React from 'react';
 import './styles.css';
-import React, { useEffect } from 'react';
-import { useState } from 'react';
 
-import WormholeConnect from '../../WormholeConnect';
 import { WormholeConnectConfig } from 'config/types';
-import { compressToBase64, decompressFromBase64 } from 'lz-string';
+import WormholeConnect from '../../WormholeConnect';
 
-/*
- *
- * For the purposes of the DemoApp config sandbox, we expose the same exports
- * that are available from the production @wormhole-foundation/wormhole-connect
- * library.
- *
- * These can be referenced in the same way in the DemoApp sandbox so that the
- * config works when it's copy and pasted into an actual integrator project.
- *
- * The exports are:
- * - DEFAULT_ROUTES
- * - nttRoutes
- * - AutomaticTokenBridgeRoute
- * - TokenBridgeRoute
- * - AutomaticCCTPRoute
- * - ManualCCTPRoute
- *
- * We also make the following test utilities available:
- * - nttTestRoutesMainnet
- * - nttTestRoutesTestnet
- * These just call nttRoutes() with a working config so that we can
- * easily test NTT in the DemoApp.
- *
- */
-import { routes } from '@wormhole-foundation/sdk';
-import {
-  MayanRoute,
-  MayanRouteWH,
-  MayanRouteMCTP,
-  MayanRouteSWIFT,
-} from '@mayanfinance/wormhole-sdk-route';
-import { NTT_TEST_CONFIG_TESTNET, NTT_TEST_CONFIG_MAINNET } from './consts';
-import { DEFAULT_ROUTES, nttRoutes } from 'routes/operator';
 
-const MAX_URL_SIZE = 30_000; // 30kb (HTTP header limit is set to 32kb)
 
-const parseConfig = (config: string): WormholeConnectConfig => {
-  if (config) {
-    try {
-      // Using ts-ignore on these because TypeScript is confused
-      // (They are meant to be used by the code passed into eval() below)
-      /* @ts-ignore */
-      window.DEFAULT_ROUTES = DEFAULT_ROUTES;
-      /* @ts-ignore */
-      window.nttRoutes = nttRoutes;
-      /* @ts-ignore */
-      window.AutomaticTokenBridgeRoute = routes.AutomaticTokenBridgeRoute;
-      /* @ts-ignore */
-      window.AutomaticCCTPRoute = routes.AutomaticCCTPRoute;
-      /* @ts-ignore */
-      window.TokenBridgeRoute = routes.TokenBridgeRoute;
-      /* @ts-ignore */
-      window.CCTPRoute = routes.CCTPRoute;
-      /* @ts-ignore */
-      window.MayanRoute = MayanRoute;
-      /* @ts-ignore */
-      window.MayanRouteWH = MayanRouteWH;
-      /* @ts-ignore */
-      window.MayanRouteMCTP = MayanRouteMCTP;
-      /* @ts-ignore */
-      window.MayanRouteSWIFT = MayanRouteSWIFT;
-      /* @ts-ignore */
-      window.testNttRoutesTestnet = () => nttRoutes(NTT_TEST_CONFIG_TESTNET);
-      /* @ts-ignore */
-      window.testNttRoutesMainnet = () => nttRoutes(NTT_TEST_CONFIG_MAINNET);
+import { nttRoutes } from 'routes/operator';
 
-      return eval(
-        `(function() { return ${config} })()`,
-      ) as WormholeConnectConfig;
-    } catch (e) {
-      console.error('Failed to parse custom config: ', e, config);
-    }
-  }
-
-  return {};
+const routeConfig : NttRoute.Config= {
+	tokens:{
+		FTT_NTT:[
+			{
+				chain: 'Polygon',
+				token: '0xAC0F66379A6d7801D7726d5a943356A172549Adb',
+				manager: '0x2006B44684b2A579466fC04FAbC5A535946bC7AB',
+				transceiver: [
+					{
+						address: '0x997ecCd76bf0afb55F89f6b3efDCE3B9EA70D6b1', // transceivers address from deployment.json
+						type: 'wormhole'
+					}
+				]
+			},
+			{
+				chain: 'Solana',
+				token: '7JA5eZdCzztSfQbJvS8aVVxMFfd81Rs9VvwnocV1mKHu',
+				manager: 'ntTrjS9nYGsRCijV3v6Ks4QgMcEWp1SkoVnoTj4zxPJ',
+				transceiver: [
+					{
+						address: 'PXrqZfBN36PZDJM7yMtERDa92fVmzkzdWfBvYihA7zk', // transceivers address from deployment.json
+						type: 'wormhole'
+					}
+		  		],
+				quoter: 'Nqd6XqA8LbsCuG8MLWWuP865NV6jR1MbXeKxD4HLKDJ'
+			}
+		]
+	}
 };
 
-const loadInitialConfig = (): string => {
-  const params = new URLSearchParams(window.location.search);
-  const configQuery = params.get('config');
-  const configCached = localStorage.getItem(LOCAL_STORAGE_KEY);
-
-  if (configQuery) {
-    return decompressFromBase64(configQuery);
-  } else if (configCached) {
-    return configCached;
-  } else {
-    return '';
-  }
+const parseConfig : WormholeConnectConfig = {
+	network: 'Mainnet', // from deployment.json of the NTT deployment directory
+	chains: ['Polygon', 'Solana'], // from https://github.com/wormhole-foundation/wormhole-connect/blob/development/wormhole-connect/src/config/testnet/chains.ts#L170
+	rpcs: {
+		Solana: 'https://staked.helius-rpc.com?api-key=a9d0d5ed-f7ae-43fe-9883-b2503bfdc4d6',
+		Polygon: 'https://polygon-mainnet.g.alchemy.com/v2/z5HT06sWY-ixggzSPRw2rCy0B75MOki6'
+	}, 
+	// tokens: ['GEODpol', 'GEODsol'], 
+	routes: [...nttRoutes(routeConfig)], // from https://github.com/wormhole-foundation/wormhole-connect/blob/d7a6b67b18db2c8eb4a249d19ef77d0174deffbe/wormhole-connect/src/config/types.ts#L70
+	// isRouteSupportedHandler:routeSupportedHandler,
+	tokensConfig: {
+	    GEODpol: {
+	        key: 'GEODpol',
+	        symbol: 'GEOD',
+	        nativeChain: 'Polygon',
+	        displayName: 'GEOD (Polygon)',
+	        tokenId: {
+	        	chain: 'Polygon',
+	            address: '0xAC0F66379A6d7801D7726d5a943356A172549Adb' // token address
+	        },
+	        coinGeckoId: 'geodnet',
+	        icon: 'https://www.geodnet.com/metadataimg/GEODNET.svg',
+	        color: '#00C3D9',
+	        decimals: 18
+	    },
+	    GEODsol: {
+	        key: 'GEODsol',
+	        symbol: 'GEOD',
+	        nativeChain: 'Solana',
+	        displayName: 'GEOD (Solana)',
+	        tokenId: {
+	            chain: 'Solana',
+	            address: '7JA5eZdCzztSfQbJvS8aVVxMFfd81Rs9VvwnocV1mKHu' // token address
+	        },
+	        coinGeckoId: 'geodnet',
+	        icon: 'https://www.geodnet.com/metadataimg/GEODNET.svg',
+	        color: '#00C3D9',
+	        decimals: 9
+	    }
+	},
+	ui: {
+		title: '',
+		menu: [],
+		defaultInputs:{
+			fromChain: 'Polygon',
+			toChain: 'Solana',
+		},
+		showHamburgerMenu: false,
+	}
 };
 
-const setUrlQueryParam = (configInput: string) => {
-  const url = new URL(window.location.toString());
-
-  const compressedQuery = compressToBase64(configInput);
-
-  if (configInput === '' || configInput.length > MAX_URL_SIZE) {
-    url.searchParams.delete('config');
-  } else {
-    url.searchParams.set('config', compressedQuery);
-  }
-  history.replaceState({}, '', url.toString());
-};
-
-const LOCAL_STORAGE_KEY = 'wormhole-connect:demo:custom-config';
 
 function DemoApp() {
-  const [customConfig, setCustomConfig] = useState<WormholeConnectConfig>();
-  const [customConfigOpen, setCustomConfigOpen] = useState(false);
-  const [customConfigInput, setCustomConfigInput] = useState(
-    loadInitialConfig(),
-  );
-  const [customConfigNonce, setCustomConfigNonce] = useState(1);
-  const [isLoadingCustomConfig, setIsLoadingCustomConfig] = useState(true);
 
-  const updateCustomConfig = (e: any) => {
-    const input = e.target.value;
-    setCustomConfigInput(input);
-  };
 
-  const emitCustomConfig = () => {
-    localStorage.setItem(LOCAL_STORAGE_KEY, customConfigInput);
-    setUrlQueryParam(customConfigInput);
-
-    try {
-      const parsed = parseConfig(customConfigInput);
-      setCustomConfig(parsed);
-      setCustomConfigNonce(customConfigNonce + 1);
-    } catch (e) {
-      console.error(e);
-    }
-
-    if (isLoadingCustomConfig) {
-      setIsLoadingCustomConfig(false);
-    }
-  };
-
-  useEffect(emitCustomConfig, []);
 
   return (
     <>
-      <header>
-        <div>
-          <h1>Wormhole Connect - demo app</h1>
-          <a
-            href="#"
-            id="custom-config-toggle"
-            onClick={(e) => {
-              e.preventDefault();
-              setCustomConfigOpen(!customConfigOpen);
-            }}
-          >
-            {customConfigOpen ? '▾' : '▸'} Custom config{' '}
-            {customConfigInput ? (
-              <span className="custom-config-bubble">●</span>
-            ) : null}
-          </a>
-        </div>
-      </header>
 
       <article>
         <div id="demo-contents">
-          {!isLoadingCustomConfig && (
-            <WormholeConnect key={customConfigNonce} config={customConfig} />
-          )}
+
+            <WormholeConnect  config={parseConfig} />
+
         </div>
 
-        {customConfigOpen ? (
-          <div id="custom-config">
-            <textarea
-              onChange={updateCustomConfig}
-              placeholder={'{\n  "network": "Mainnet"\n}'}
-              onBlur={() => {
-                emitCustomConfig();
-              }}
-              value={customConfigInput}
-            />
-            Available exports:
-            <ul id="available-exports">
-              <li>
-                <pre>DEFAULT_ROUTES</pre>
-                <i>{'RouteConstructor[]'}</i>
-              </li>
-              <li>
-                <pre>AutomaticTokenBridgeRoute</pre>
-                <i>{'RouteConstructor'}</i>
-              </li>
-              <li>
-                <pre>TokenBridgeRoute</pre>
-                <i>{'RouteConstructor'}</i>
-              </li>
-              <li>
-                <pre>AutomaticCCTPRoute</pre>
-                <i>{'RouteConstructor'}</i>
-              </li>
-              <li>
-                <pre>CCTPRoute</pre>
-                <i>{'RouteConstructor'}</i>
-              </li>
-              <li>
-                <pre>MayanRoute</pre>
-                <i>{'RouteConstructor'}</i>
-              </li>
-              <li>
-                <pre>MayanRouteWH</pre>
-                <i>{'RouteConstructor'}</i>
-              </li>
-              <li>
-                <pre>MayanRouteMCTP</pre>
-                <i>{'RouteConstructor'}</i>
-              </li>
-              <li>
-                <pre>MayanRouteSWIFT</pre>
-                <i>{'RouteConstructor'}</i>
-              </li>
-              <li>
-                <pre>nttRoutes</pre>{' '}
-                <i>{'(NttRoute.Config) -> RouteConstructor[]'}</i>
-              </li>
-              <li>
-                <pre>testNttRoutesMainnet</pre>
-                <i>{'(NttRoute.Config) -> RouteConstructor[])'}</i>
-              </li>
-              <li>
-                <pre>testNttRoutesTestnet</pre>
-                <i>{'(NttRoute.Config) -> RouteConstructor[])'}</i>
-              </li>
-            </ul>
-          </div>
-        ) : undefined}
       </article>
     </>
   );
