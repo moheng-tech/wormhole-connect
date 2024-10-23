@@ -102,7 +102,7 @@ export const validateAmount = (
   if (balance) {
     const b = Number.parseFloat(balance.replaceAll(',', ''));
     if (numAmount > b) return 'Amount exceeds available balance.';
-    if (numAmount > 100000) return `Amount should't exceed 100000.`;
+    if (numAmount > 1000000) return `Amount should't exceed 1M.`;
   }
   if (numAmount > maxAmount) {
     return `At the moment, amount cannot exceed ${maxAmount}`;
