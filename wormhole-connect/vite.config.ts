@@ -166,12 +166,10 @@ export default defineConfig(({ command, mode }) => {
           outDir: './dist',
           rollupOptions: {
             input: {
-              main: 'src/main.tsx',
+				main: 'src/demo.tsx',
+				index: 'index.html',
             },
-            output: {
-              entryFileNames: '[name].js',
-              ...output,
-            },
+            output,
             external,
           },
         },
