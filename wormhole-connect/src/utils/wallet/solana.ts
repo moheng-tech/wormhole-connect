@@ -1,4 +1,4 @@
-import { WalletAdapterNetwork as SolanaNetwork } from '@solana/wallet-adapter-base';
+// import { WalletAdapterNetwork as SolanaNetwork } from '@solana/wallet-adapter-base';
 
 import { Wallet } from '@xlabs-libs/wallet-aggregator-core';
 import {
@@ -8,7 +8,7 @@ import {
   SolongWalletAdapter,
   TorusWalletAdapter,
   NightlyWalletAdapter,
-  WalletConnectWalletAdapter,
+  // WalletConnectWalletAdapter,
 } from '@solana/wallet-adapter-wallets';
 
 import {
@@ -59,21 +59,21 @@ export function fetchOptions() {
     solong: new SolanaWallet(new SolongWalletAdapter(), connection),
     torus: new SolanaWallet(new TorusWalletAdapter(), connection),
     nightly: new SolanaWallet(new NightlyWalletAdapter(), connection),
-    ...(config.ui.walletConnectProjectId
-      ? {
-          walletConnect: new SolanaWallet(
-            new WalletConnectWalletAdapter({
-              network: config.isMainnet
-                ? SolanaNetwork.Mainnet
-                : SolanaNetwork.Devnet,
-              options: {
-                projectId: config.ui.walletConnectProjectId,
-              },
-            }),
-            connection,
-          ),
-        }
-      : {}),
+    // ...(config.ui.walletConnectProjectId
+    //   ? {
+    //       walletConnect: new SolanaWallet(
+    //         new WalletConnectWalletAdapter({
+    //           network: config.isMainnet
+    //             ? SolanaNetwork.Mainnet
+    //             : SolanaNetwork.Devnet,
+    //           options: {
+    //             projectId: config.ui.walletConnectProjectId,
+    //           },
+    //         }),
+    //         connection,
+    //       ),
+    //     }
+    //   : {}),
   };
 }
 
