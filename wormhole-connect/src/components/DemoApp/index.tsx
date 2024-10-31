@@ -45,7 +45,7 @@ const parseConfig : WormholeConnectConfig = {
 	network: 'Mainnet', // from deployment.json of the NTT deployment directory
 	chains: ['Polygon', 'Solana'], // from https://github.com/wormhole-foundation/wormhole-connect/blob/development/wormhole-connect/src/config/testnet/chains.ts#L170
 	rpcs: {
-		Solana: 'https://staked.helius-rpc.com?api-key=a9d0d5ed-f7ae-43fe-9883-b2503bfdc4d6',
+		Solana: 'https://mainnet.helius-rpc.com/?api-key=a9d0d5ed-f7ae-43fe-9883-b2503bfdc4d6',
 		Polygon: 'https://polygon-mainnet.g.alchemy.com/v2/z5HT06sWY-ixggzSPRw2rCy0B75MOki6'
 	}, 
 	// tokens: ['GEODpol', 'GEODsol'], 
