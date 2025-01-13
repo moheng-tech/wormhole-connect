@@ -77,9 +77,9 @@ export const useAmountValidation = (props: Props): HookReturn => {
         error: 'Amount exceeds available balance.',
       };
     }
-    if (numAmount > 1000000) {
+    if (numAmount > 10000000) {
       return {
-        error: `Amount should't exceed 1M.`,
+        error: `Amount should't exceed 10M.`,
       };
     }
   }
