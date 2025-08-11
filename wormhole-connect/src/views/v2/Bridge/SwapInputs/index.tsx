@@ -1,9 +1,11 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 import IconButton from '@mui/material/IconButton';
 import SwapVertIcon from '@mui/icons-material/SwapVert';
 import { makeStyles } from 'tss-react/mui';
+import AlertBanner from 'components/AlertBanner';
+import { Box } from '@mui/material';
 
 import config from 'config';
 import { RootState } from 'store';
@@ -24,6 +26,7 @@ const useStyles = makeStyles()(() => ({
 
 function SwapInputs() {
   const dispatch = useDispatch();
+  const [error, setError] = useState('');
 
   const {
     isTransactionInProgress,
@@ -41,7 +44,16 @@ function SwapInputs() {
 
   const swap = useCallback(() => {
     if (!canSwap || isTransactionInProgress) return;
-
+    
+    if('GEODsol' === destToken){
+    	if(error){
+    		setError('');
+    	}else{
+    		setError('Solana to Polygon bridge is temporary disabled ',);
+    	}
+    	return;
+    }
+    
     dispatch(swapInputs());
     dispatch(swapWallets());
     dispatch(setAmount(''));
@@ -59,18 +71,22 @@ function SwapInputs() {
           }
         });
     }
-  }, [destToken, sourceToken, fromChain, toChain]);
+  }, [destToken, sourceToken, fromChain, toChain, error]);
 
   const { classes } = useStyles();
 
   return (
-    <IconButton
-      className={classes.swapButton}
-      onClick={swap}
-      disabled={!canSwap}
-    >
-      <SwapVertIcon color="secondary" />
-    </IconButton>
+	<Box>
+	  <IconButton
+	    className={classes.swapButton}
+	    onClick={swap}
+	    disabled={!canSwap}
+	  >
+	    <SwapVertIcon color="secondary" />
+	  </IconButton>
+	  <AlertBanner show={!!error} content={error} error margin="15px 0 0 0" />
+	</Box>
+    
   );
 }
 
