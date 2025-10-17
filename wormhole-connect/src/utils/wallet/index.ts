@@ -25,14 +25,6 @@ import {
   EvmUnsignedTransaction,
   EvmChains,
 } from '@wormhole-foundation/sdk-evm';
-import {
-  SuiUnsignedTransaction,
-  SuiChains,
-} from '@wormhole-foundation/sdk-sui';
-import {
-  AptosUnsignedTransaction,
-  AptosChains,
-} from '@wormhole-foundation/sdk-aptos';
 import { SolanaUnsignedTransaction } from '@wormhole-foundation/sdk-solana';
 
 export enum TransferWallet {
@@ -196,10 +188,6 @@ export const switchChain = async (
       throw e;
     }
   }
-  if (config.context === Context.COSMOS) {
-    const { switchChain } = await import('utils/wallet/cosmos');
-    await switchChain(w, chainId as string);
-  }
   return w.getAddress();
 };
 
@@ -245,20 +233,6 @@ export const signAndSendTransaction = async (
       options,
     );
     return signature;
-  } else if (chainConfig.context === Context.SUI) {
-    const { signAndSendTransaction } = await import('utils/wallet/sui');
-    const tx = await signAndSendTransaction(
-      request as SuiUnsignedTransaction<Network, SuiChains>,
-      wallet,
-    );
-    return tx.id;
-  } else if (chainConfig.context === Context.APTOS) {
-    const { signAndSendTransaction } = await import('utils/wallet/aptos');
-    const tx = await signAndSendTransaction(
-      request as AptosUnsignedTransaction<Network, AptosChains>,
-      wallet,
-    );
-    return tx.id;
   } else {
     throw new Error('unimplemented');
   }
@@ -340,42 +314,6 @@ export const getWalletOptions = async (
     const { fetchOptions } = await import('utils/wallet/solana');
     const solanaWallets = fetchOptions();
     return Object.values(mapWallets(solanaWallets, Context.SOLANA));
-  } else if (config.context === Context.SUI) {
-    const suiWallet = await import('utils/wallet/sui');
-    const suiOptions = await suiWallet.fetchOptions();
-    return Object.values(mapWallets(suiOptions, Context.SUI));
-  } else if (config.context === Context.APTOS) {
-    const aptosWallet = await import('utils/wallet/aptos');
-    const aptosOptions = aptosWallet.fetchOptions();
-    return Object.values(mapWallets(aptosOptions, Context.APTOS));
-  } else if (config.context === Context.SEI) {
-    const seiWallet = await import('utils/wallet/sei');
-    const seiOptions = await seiWallet.fetchOptions();
-    return Object.values(mapWallets(seiOptions, Context.SEI));
-  } else if (config.context === Context.COSMOS) {
-    if (config.key === 'Evmos') {
-      const {
-        wallets: { cosmosEvm },
-      } = await import('utils/wallet/cosmos');
-
-      return Object.values(
-        mapWallets(cosmosEvm, Context.COSMOS, ['OKX Wallet']),
-      );
-    } else if (config.key === 'Injective') {
-      const {
-        wallets: { cosmosEvm },
-      } = await import('utils/wallet/cosmos');
-
-      return Object.values(
-        mapWallets(cosmosEvm, Context.COSMOS, ['OKX Wallet']),
-      );
-    } else {
-      const {
-        wallets: { cosmos },
-      } = await import('utils/wallet/cosmos');
-
-      return Object.values(mapWallets(cosmos, Context.COSMOS));
-    }
-  }
+  } 
   return [];
 };
